@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Para Karen ❤️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #8e5858;
+        --secondary: #c9a7a7;
+        --paper: #fffdf9;
+        --text: #4a3b3b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Playfair Display', serif;
+        background-color: #f2e9e4;
+        background-image: radial-gradient(#e6d5ce 1px, transparent 1px);
+        background-size: 25px 25px;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        color: var(--text);
+    }
+
+    /* --- SISTEMA DE PARTÍCULAS (FONDO MÁGICO) --- */
+    #particles {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 1; pointer-events: none; overflow: hidden;
+    }
+    .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        animation: floatParticle linear infinite;
+    }
+    @keyframes floatParticle {
+        0% { transform: translateY(0) translateX(0); opacity: 0; }
+        50% { opacity: 0.8; }
+        100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+    }
+
+    /* --- PANTALLA DEL SOBRE (Intro) --- */
+    #intro-screen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(135deg, #f2e9e4 0%, #dec2bc 100%);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        z-index: 100; transition: all 1s ease;
+    }
+
+    .title-intro {
+        font-family: 'Dancing Script', cursive;
+        font-size: 3.5rem; color: var(--primary); margin-bottom: 40px;
+        text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
+        animation: float 3s ease-in-out infinite;
+        z-index: 102; /* Por encima de todo */
+    }
+
+    .envelope-container { cursor: pointer; transition: transform 0.3s ease; z-index: 102; }
+    .envelope-container:hover { transform: scale(1.02); }
+
+    .envelope {
+        width: 320px; height: 220px; background: #a67c7c; position: relative;
+        display: flex; justify-content: center; border-radius: 5px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+    .envelope::before { content: ''; position: absolute; width: 0; height: 0; border-top: 110px solid transparent; border-bottom: 110px solid transparent; border-left: 160px solid #bd9292; border-radius: 5px 0 0 5px; top:0; left:0;}
+    .envelope::after { content: ''; position: absolute; width: 0; height: 0; border-top: 110px solid transparent; border-bottom: 110px solid transparent; border-right: 160px solid #bd9292; border-radius: 0 5px 5px 0; top:0; right:0;}
+    
+    .lid { 
+        position: absolute; top: 0; width: 0; height: 0; 
+        border-left: 160px solid transparent; border-right: 160px solid transparent; 
+        border-top: 120px solid #cfaba8; transform-origin: top; 
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; 
+    }
+    .lid.open { transform: rotateX(180deg); z-index: 0; }
+
+    .wax-seal {
+        position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);
+        width: 55px; height: 55px; background: #8e2626; border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 20;
+        display: flex; align-items: center; justify-content: center;
+        color: rgba(255,255,255,0.9); font-family: 'Dancing Script'; font-size: 28px;
+        border: 3px solid rgba(255,255,255,0.1); 
+        cursor: pointer;
+        /* Preparado para la animación de caída */
+        transition: transform 0.2s; 
+    }
+    .wax-seal:hover { transform: translate(-50%, -50%) scale(1.05); background: #a02b2b; }
+
+    /* Animación de caída física del sello */
+    .wax-seal.drop {
+        animation: dropSeal 0.8s forwards cubic-bezier(0.6, -0.28, 0.735, 0.045);
+    }
+    @keyframes dropSeal {
+        0% { transform: translate(-50%, -50%); }
+        20% { transform: translate(-50%, -60%); } /* Un pequeño rebote hacia arriba antes de caer */
+        100% { transform: translate(-50%, 600px) rotate(45deg); opacity: 0; }
+    }
+
+    /* --- CONTENIDO PRINCIPAL (App) --- */
+    #main-content {
+        display: none; 
+        width: 100%; height: 100%;
+        background: var(--paper);
+        flex-direction: column;
+        animation: fadeIn 1.5s ease forwards;
+        z-index: 50;
+    }
+
+    /* Header Reducido */
+    header {
+        background: #fff0f0; padding: 10px 20px;
+        display: flex; align-items: center; justify-content: space-between;
+        border-bottom: 2px solid rgba(142, 88, 88, 0.1);
+        flex-shrink: 0;
+    }
+    .header-title { font-family: 'Dancing Script', cursive; font-size: 1.6rem; color: var(--primary); }
+    .music-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.7; transition: opacity 0.3s; }
+    .music-btn.playing { opacity: 1; animation: spin 4s linear infinite; }
+
+    /* Navegación */
+    .nav-tabs {
+        display: flex; background: white; padding: 5px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        flex-shrink: 0;
+    }
+    .nav-btn {
+        flex: 1; background: transparent; border: none; padding: 12px;
+        font-family: 'Playfair Display', serif; font-size: 1rem; color: #999;
+        position: relative; transition: all 0.3s; cursor: pointer;
+    }
+    .nav-btn.active { color: var(--primary); font-weight: 600; }
+    .nav-btn.active::after { content: ''; position: absolute; bottom: 0; left: 25%; width: 50%; height: 3px; background: var(--primary); border-radius: 10px; }
+
+    /* Área de Scroll */
+    .scroll-area {
+        flex: 1; overflow-y: auto; overflow-x: hidden;
+        padding: 25px 20px;
+        background-image: 
+            linear-gradient(to right, rgba(142, 88, 88, 0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(142, 88, 88, 0.03) 1px, transparent 1px);
+        background-size: 20px 20px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* --- ESTILOS DE LA CARTA --- */
+    .digital-letter {
+        max-width: 600px; margin: 0 auto;
+        font-size: 1.05rem; line-height: 1.7; color: #5a4a4a;
+        min-height: 100%; /* Asegura espacio para scroll */
+    }
+    .letter-intro, .letter-outro {
+        text-align: center; font-family: 'Dancing Script', cursive; color: var(--primary); margin: 20px 0;
+    }
+    .letter-intro { font-size: 2rem; border-bottom: 1px solid var(--secondary); padding-bottom: 20px; }
+    .letter-outro { font-size: 1.8rem; margin-top: 40px; }
+    
+    .digital-letter p { margin-bottom: 1.5em; text-align: justify; }
+    
+    /* El cursor del efecto typewriter */
+    .cursor::after {
+        content: '|';
+        animation: blink 1s infinite;
+        color: var(--primary);
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    .highlight { color: var(--primary); font-weight: 600; font-style: italic; }
+
+    /* --- ESTILOS DE LOS CUPONES --- */
+    .coupon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px; max-width: 800px; margin: 0 auto;
+        padding-bottom: 40px;
+    }
+
+    .coupon-card {
+        background: #fff; border: 2px dashed var(--secondary); border-radius: 12px;
+        padding: 20px; position: relative; overflow: hidden;
+        transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transición más rápida para efecto táctil */
+        cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        user-select: none; /* Evita que se seleccione el texto al hacer click rápido */
+    }
+    
+    /* Efecto Táctil de "presionar" */
+    .coupon-card:active {
+        transform: scale(0.95);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .coupon-card::before, .coupon-card::after { 
+        content: ''; position: absolute; height: 30px; width: 30px; background: var(--paper); border-radius: 50%;
+        top: 50%; transform: translateY(-50%); border: 1px solid rgba(0,0,0,0.05);
+    }
+    .coupon-card::before { left: -17px; } .coupon-card::after { right: -17px; }
+
+    .coupon-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(142, 88, 88, 0.15); border-color: var(--primary); }
+    
+    .coupon-card.redeemed { opacity: 0.6; filter: grayscale(80%); }
+    .coupon-card.redeemed::after { 
+        content: 'CANJEADO'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-20deg);
+        font-size: 2rem; color: #c0392b; font-weight: bold; border: 3px solid #c0392b; padding: 5px 15px; opacity: 0.8;
+        z-index: 10; width: auto; height: auto; background: rgba(255,255,255,0.8); border-radius: 5px;
+    }
+
+    .coupon-header {
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+        border-bottom: 1px dotted var(--secondary); padding-bottom: 10px;
+    }
+    .coupon-title { font-family: 'Dancing Script'; font-size: 1.6rem; color: var(--primary); }
+    .coupon-value { background: var(--primary); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+    .coupon-desc { font-size: 1rem; line-height: 1.4; color: var(--text); font-style: italic;}
+
+    /* --- EXTRAS --- */
+    .fade-enter { animation: smoothFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes smoothFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    .petal { position: fixed; top: -20px; font-size: 20px; pointer-events: none; z-index: 9999; animation: fall linear forwards; }
+    @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
+
+    @media (max-width: 480px) {
+        .envelope { width: 280px; height: 190px; }
+        .title-intro { font-size: 2.8rem; }
+        .digital-letter { font-size: 1rem; }
+    }
+</style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="cancion.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="particles"></div>
+
+    <div id="intro-screen">
+        <h1 class="title-intro">Para Karen ❤️</h1>
+        <div class="envelope-container" onclick="abrirRegalo()">
+            <div class="envelope">
+                <div class="lid" id="envelope-lid"></div>
+                <div class="wax-seal" id="seal">K</div>
+            </div>
+        </div>
+        <p style="margin-top: 40px; font-family: 'Dancing Script'; font-size: 1.2rem; color: var(--primary); opacity: 0.8;">Toca el sello para descubrir...</p>
+    </div>
+
+    <div id="main-content">
+        <header>
+            <div class="header-title">Nuestro San Valentín</div>
+            <button class="music-btn playing" onclick="toggleMusic()" id="music-ctrl">🎵</button>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="nav-btn active" onclick="cambiarPestana('carta', this)">La Carta</button>
+            <button class="nav-btn" onclick="cambiarPestana('cupones', this)">Cuponera de Amor</button>
+        </nav>
+
+        <div class="scroll-area" id="content-area">
+            </div>
+    </div>
+
+<script>
+    // --- 1. CONFIGURACIÓN ---
+    const introScreen = document.getElementById('intro-screen');
+    const mainContent = document.getElementById('main-content');
+    const music = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-ctrl');
+    const contentArea = document.getElementById('content-area');
+    let petalosActivos = false;
+
+    // --- TEXTO DE LA CARTA (Para el efecto Typewriter) ---
+    // Usamos HTML dentro del string para mantener formatos
+    const cartaHTML = `
+        <div class="digital-letter">
+            <div class="letter-intro">Love You</div>
+            <div id="typewriter-body"></div>
+            <div class="letter-outro">
+                Feliz San Valentín.<br>
+                Gracias por amar conmigo de la forma más consciente, más valiente y más real que existe.<br>
+                <br>
+                Con amor, Jose. ❤️
+            </div>
+        </div>
+    `;
+
+    const textoCarta = `
+<p>Hoy quiero decirte algo que solo se entiende cuando se vive. Nuestra historia nació en la distancia... y con ella llegaron los celos, las inseguridades, los miedos. Todo eso que muchos ven como debilidad, pero que en realidad es la <span class="highlight">prueba más honesta de que lo que sentimos es real</span>.</p>
+
+<p>Porque amar a distancia no es amar en automático. Amar así te obliga a estar despierto... atento... consciente. A leer entre líneas cada mensaje. A escuchar los silencios detrás de cada palabra. A sentir el ánimo del otro incluso cuando no está cerca.</p>
+
+<p>Es un amor que no se da por hecho. Se elige... todos los días. Y hay algo profundamente hermoso en eso.</p>
+
+<p>Porque cuando miremos atrás, no veremos una relación que sobrevivió por ser perfecta. Veremos una historia que resistió porque fue elegida, una y otra vez... incluso cuando era difícil, incluso cuando dolía...</p>
+
+<p>Nuestro amor no existe por inercia. Existe por decisión, cuidado, intención y valentía. Y si algo tengo claro hoy, es que elegirte nunca ha sido un esfuerzo... <span class="highlight">ha sido un privilegio</span>.</p>
+    `;
+
+    // --- 2. FUNCIÓN DE ABRIR EL REGALO (CON FÍSICA) ---
+    function abrirRegalo() {
+        const seal = document.getElementById('seal');
+        const lid = document.getElementById('envelope-lid');
+
+        // 1. Animación de caída del sello
+        seal.classList.add('drop');
+
+        // 2. Esperar a que el sello caiga un poco antes de abrir la tapa
+        setTimeout(() => {
+            lid.classList.add('open');
+            
+            // Música
+            music.volume = 0.4;
+            music.play().catch(() => {
+                musicBtn.classList.remove('playing');
+                musicBtn.textContent = "🔇";
+            });
+
+            // 3. Desvanecer intro
+            setTimeout(() => {
+                introScreen.style.opacity = '0';
+                setTimeout(() => {
+                    introScreen.style.display = 'none';
+                    mainContent.style.display = 'flex';
+                    
+                    // Iniciar la app en la carta
+                    cambiarPestana('carta', document.querySelector('.nav-btn.active'));
+                    iniciarPetalos();
+                }, 800);
+            }, 800);
+        }, 300); // Retardo para ver caer el sello
+    }
+
+    // --- 3. NAVEGACIÓN Y EFECTO TYPEWRITER ---
+    let typewriterTimeouts = [];
+
+    function cambiarPestana(tipo, btn) {
+        // Limpiar timeouts viejos si cambia rápido
+        typewriterTimeouts.forEach(t => clearTimeout(t));
+        typewriterTimeouts = [];
+
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+
+        contentArea.style.opacity = 0;
+        
+        setTimeout(() => {
+            contentArea.scrollTop = 0;
+            contentArea.innerHTML = ''; // Limpiar
+
+            if (tipo === 'carta') {
+                // Preparamos la estructura base
+                contentArea.innerHTML = cartaHTML;
+                const container = document.getElementById('typewriter-body');
+                container.innerHTML = ""; // Asegurar que esté vacío para empezar a escribir
+                
+                // Disparamos el efecto de escritura
+                escribirHTML(container, textoCarta, 0);
+            } else {
+                cargarCuponesHtml();
+            }
+
+            contentArea.style.opacity = 1;
+            Array.from(contentArea.children).forEach(child => child.classList.add('fade-enter'));
+        }, 200);
+    }
+
+    // Función Recursiva para escribir respetando HTML
+    function escribirHTML(elemento, html, indice) {
+        if (indice >= html.length) return;
+
+        // Si encontramos una etiqueta HTML (ej: <p> o <span>), la escribimos entera de golpe
+        if (html[indice] === '<') {
+            let etiqueta = '';
+            while (html[indice] !== '>' && indice < html.length) {
+                etiqueta += html[indice];
+                indice++;
+            }
+            etiqueta += '>'; // Añadir el cierre
+            indice++;
+            elemento.innerHTML += etiqueta;
+            // Continuar inmediatamente sin pausa
+            escribirHTML(elemento, html, indice);
+        } else {
+            // Si es un caracter normal, lo añadimos y esperamos
+            elemento.innerHTML += html[indice];
+            const tiempoEspera = Math.random() * 30 + 20; // Variación random para realismo (20-50ms)
+            
+            // Scroll automático suave hacia abajo mientras escribe
+            const scrollArea = document.getElementById('content-area');
+            if(scrollArea.scrollHeight - scrollArea.scrollTop < 800) {
+                 scrollArea.scrollTop = scrollArea.scrollHeight;
+            }
+
+            const t = setTimeout(() => {
+                escribirHTML(elemento, html, indice + 1);
+            }, tiempoEspera);
+            typewriterTimeouts.push(t);
+        }
+    }
+
+    // --- 4. CUPONES ---
+    const cuponesData = [
+        { titulo: "Sera Cool", valor: "100% VÁLIDO", desc: "Playlist personalizada. Música solo para nosotros." },
+        { titulo: "Lo Disfrutarás", valor: "100% VÁLIDO", desc: "1 Tiramisú. El postre perfecto." },
+        { titulo: "Pero NO abuses", valor: "100% VÁLIDO", desc: "Elegir las siguientes 3 películas sin quejas." },
+        { titulo: "Recuerda TQM", valor: "100% VÁLIDO", desc: "Challenge ridículo (Cantar o imitar)." },
+        { titulo: "Cupón de Amor", valor: "100% VÁLIDO", desc: "Decidir qué comer en nuestra primera comida juntos." },
+        { titulo: "Lo Disfrutaré", valor: "100% VÁLIDO", desc: "Un largo masaje en la espalda (mínimo 1 hora)." },
+        { titulo: "Sí, Todo", valor: "100% VÁLIDO", desc: "Hacer todo lo que quieras por 1 día entero." },
+        { titulo: "Yummy Yummy", valor: "100% VÁLIDO", desc: "Besos acumulados que se pagan con intereses. 😘" }
+    ];
+
+    function cargarCuponesHtml() {
+        let gridHtml = '<div class="coupon-grid">';
+        cuponesData.forEach((cupon) => {
+            gridHtml += `
+                <div class="coupon-card" onclick="canjearCupon(this)">
+                    <div class="coupon-header">
+                        <span class="coupon-title">${cupon.titulo}</span>
+                        <span class="coupon-value">${cupon.valor}</span>
+                    </div>
+                    <p class="coupon-desc">${cupon.desc}</p>
+                </div>
+            `;
+        });
+        gridHtml += '</div>';
+        gridHtml += `<p style="text-align: center; color: var(--secondary); font-size: 0.9rem; margin-top: 20px; font-style: italic;">* Estos cupónes son de carácter permanente y no poseen fecha de expiración.
+ Su uso es personal, intransferible y exclusivo.
+ Solo puede ser canjeado por Karen Solis. Una vez Canjeado envia una captura del mismo como prueba.
+.</p>`;
+        contentArea.innerHTML = gridHtml;
+    }
+
+    function canjearCupon(elemento) {
+        // La clase :active en CSS maneja la animación de encogimiento
+        elemento.classList.toggle('redeemed');
+        if (navigator.vibrate) navigator.vibrate(50);
+    }
+
+    // --- 5. EXTRAS (Música y Partículas) ---
+    function toggleMusic() {
+        if (music.paused) {
+            music.play();
+            musicBtn.classList.add('playing');
+            musicBtn.textContent = "🎵";
+        } else {
+            music.pause();
+            musicBtn.classList.remove('playing');
+            musicBtn.textContent = "🔇";
+        }
+    }
+
+    function iniciarPetalos() {
+        if(petalosActivos) return;
+        petalosActivos = true;
+        const simbolos = ['🌸', '🌹', '✨', '❤️'];
+        
+        setInterval(() => {
+            const petalo = document.createElement('div');
+            petalo.className = 'petal';
+            petalo.textContent = simbolos[Math.floor(Math.random() * simbolos.length)];
+            petalo.style.left = Math.random() * 100 + 'vw';
+            petalo.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            document.body.appendChild(petalo);
+            setTimeout(() => petalo.remove(), 10000);
+        }, 800);
+    }
+
+    // Script de Partículas de Fondo (Micro-vibraciones)
+    function generarParticulasFondo() {
+        const contenedor = document.getElementById('particles');
+        const cantidad = 30; // Número de partículas
+
+        for (let i = 0; i < cantidad; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            
+            // Posición y tamaño aleatorio
+            const size = Math.random() * 5 + 2 + 'px';
+            p.style.width = size;
+            p.style.height = size;
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.top = Math.random() * 100 + 'vh';
+            
+            // Animación aleatoria
+            p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+            p.style.animationDelay = (Math.random() * 5) + 's';
+            
+            contenedor.appendChild(p);
+        }
+    }
+    
+    // Iniciar partículas al cargar
+    generarParticulasFondo();
+
+</script>
+</body>
+</html>
